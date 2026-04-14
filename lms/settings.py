@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'courses', #Applikasi yang baru kita install
 ]
 
 MIDDLEWARE = [
@@ -75,6 +76,14 @@ WSGI_APPLICATION = 'lms.wsgi.application'
 
 # Konfigurasi database PostgreSQL
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lms_db',
+        'USER': 'lms_user',
+        'PASSWORD': 'lms_pass',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
 }
 
 
