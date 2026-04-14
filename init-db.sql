@@ -1,0 +1,2 @@
+CREATE ROLE lms_user WITH LOGIN PASSWORD 'lms_pass' CREATEDB;
+CREATE DATABASE lms_db OWNER lms_user;
