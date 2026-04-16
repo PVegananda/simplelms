@@ -3,6 +3,27 @@ from django.http import JsonResponse
 from .models import Course, CourseMember
 
 
+# Welcome Endpoint
+def welcome(request):
+    """
+    Welcome endpoint - API is running
+    """
+    return JsonResponse({
+        'message': 'Welcome to PasyahDjango API',
+        'version': '1.0',
+        'endpoints': {
+            'health': '/health/',
+            'status': '/status/',
+            'course_list_baseline': '/lab/course-list/baseline/',
+            'course_list_optimized': '/lab/course-list/optimized/',
+            'course_members_baseline': '/lab/course-members/baseline/',
+            'course_members_optimized': '/lab/course-members/optimized/',
+            'course_dashboard_baseline': '/lab/course-dashboard/baseline/',
+            'course_dashboard_optimized': '/lab/course-dashboard/optimized/',
+        }
+    })
+
+
 def course_list_baseline(request):
     """
     Endpoint: /lab/course-list/baseline/
@@ -155,3 +176,47 @@ def course_dashboard_optimized(request):
         })
     
     return JsonResponse({'data': data})
+
+
+# Health Check Endpoints
+def health(request):
+    """
+    Simple health check endpoint
+    """
+    try:
+        # Check database connection
+        Course.objects.count()
+        return JsonResponse({
+            'status': 'healthy',
+            'database': 'connected',
+            'message': 'Backend is running successfully'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'unhealthy',
+            'database': 'disconnected',
+            'error': str(e)
+        }, status=500)
+
+
+def status(request):
+    """
+    Status endpoint with data summary
+    """
+    try:
+        courses_count = Course.objects.count()
+        members_count = CourseMember.objects.count()
+        
+        return JsonResponse({
+            'status': 'ok',
+            'environment': 'production' if not __debug__ else 'development',
+            'courses': courses_count,
+            'members': members_count,
+            'message': 'API is operational'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e)
+        }, status=500)
+

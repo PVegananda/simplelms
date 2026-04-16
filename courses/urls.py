@@ -4,6 +4,13 @@ from . import views
 app_name = 'courses'
 
 urlpatterns = [
+    # Welcome Endpoint
+    path('', views.welcome, name='welcome'),
+    
+    # Health Check
+    path('health/', views.health, name='health'),
+    path('status/', views.status, name='status'),
+    
     # Course List
     path('lab/course-list/baseline/', views.course_list_baseline, name='course_list_baseline'),
     path('lab/course-list/optimized/', views.course_list_optimized, name='course_list_optimized'),
