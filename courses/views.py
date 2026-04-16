@@ -102,3 +102,56 @@ def course_members_optimized(request):
         })
     
     return JsonResponse({'data': data})
+
+
+def course_dashboard_baseline(request):
+    """
+    Endpoint: /lab/course-dashboard/baseline/
+    Inefficient: Loop untuk count members, banyak query
+    """
+    courses = Course.objects.all()
+    data = []
+    
+    for course in courses:
+        members_count = course.coursemember_set.count()
+        students_count = course.coursemember_set.filter(role='std').count()
+        assistants_count = course.coursemember_set.filter(role='ast').count()
+        
+        data.append({
+            'id': course.id,
+            'name': course.name,
+            'teacher': course.teacher.username,
+            'total_members': members_count,
+            'students': students_count,
+            'assistants': assistants_count,
+        })
+    
+    return JsonResponse({'data': data})
+
+
+def course_dashboard_optimized(request):
+    """
+    Endpoint: /lab/course-dashboard/optimized/
+    Optimized: aggregate di database level + annotate
+    """
+    from django.db.models import Count, Q
+    
+    courses = Course.objects.select_related('teacher').annotate(
+        total_members=Count('coursemember'),
+        students_count=Count('coursemember', filter=Q(coursemember__role='std')),
+        assistants_count=Count('coursemember', filter=Q(coursemember__role='ast')),
+    ).all()
+    
+    data = []
+    
+    for course in courses:
+        data.append({
+            'id': course.id,
+            'name': course.name,
+            'teacher': course.teacher.username,
+            'total_members': course.total_members,
+            'students': course.students_count,
+            'assistants': course.assistants_count,
+        })
+    
+    return JsonResponse({'data': data})
