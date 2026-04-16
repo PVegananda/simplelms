@@ -3,3 +3,4 @@ psycopg2-binary
 python-dotenv
 Pillow
 django-silk==5.1.0
+django-cors-headers
