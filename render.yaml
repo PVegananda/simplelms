@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: pasyahdjango
+    env: python
+    runtime: python-3.10
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,.pasyahdjango.onrender.com"
+      - key: SECRET_KEY
+        generateValue: true
+    databases:
+      - name: postgres
+        version: 15
+        plan: free
