@@ -56,8 +56,8 @@ def course_members_baseline(request):
         for member in members:
             member_list.append({
                 'id': member.id,
-                'user': member.user.username,
-                'role': member.role,
+                'user': member.user_id.username,
+                'role': member.roles,
             })
         
         data.append({
@@ -78,7 +78,7 @@ def course_members_optimized(request):
     from django.db.models import Prefetch
     
     courses = Course.objects.prefetch_related(
-        Prefetch('coursemember_set', CourseMember.objects.select_related('user'))
+        Prefetch('coursemember_set', CourseMember.objects.select_related('user_id'))
     ).all()
     
     data = []
@@ -90,8 +90,8 @@ def course_members_optimized(request):
         for member in members:
             member_list.append({
                 'id': member.id,
-                'user': member.user.username,
-                'role': member.role,
+                'user': member.user_id.username,
+                'role': member.roles,
             })
         
         data.append({
@@ -114,8 +114,8 @@ def course_dashboard_baseline(request):
     
     for course in courses:
         members_count = course.coursemember_set.count()
-        students_count = course.coursemember_set.filter(role='std').count()
-        assistants_count = course.coursemember_set.filter(role='ast').count()
+        students_count = course.coursemember_set.filter(roles='std').count()
+        assistants_count = course.coursemember_set.filter(roles='ast').count()
         
         data.append({
             'id': course.id,
@@ -138,8 +138,8 @@ def course_dashboard_optimized(request):
     
     courses = Course.objects.select_related('teacher').annotate(
         total_members=Count('coursemember'),
-        students_count=Count('coursemember', filter=Q(coursemember__role='std')),
-        assistants_count=Count('coursemember', filter=Q(coursemember__role='ast')),
+        students_count=Count('coursemember', filter=Q(coursemember__roles='std')),
+        assistants_count=Count('coursemember', filter=Q(coursemember__roles='ast')),
     ).all()
     
     data = []
