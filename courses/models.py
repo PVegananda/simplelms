@@ -22,6 +22,10 @@ class Course(models.Model):
     class Meta:
         verbose_name = "Mata Kuliah"
         verbose_name_plural = "Mata Kuliah"
+        indexes = [
+            models.Index(fields=['price']),
+            models.Index(fields=['teacher', 'price']),
+        ]
 
 
 ROLE_OPTIONS = [
@@ -54,6 +58,10 @@ class CourseMember(models.Model):
     class Meta:
         verbose_name = "Anggota Kelas"
         verbose_name_plural = "Anggota Kelas"
+        indexes = [
+            models.Index(fields=['course_id', 'roles']),
+            models.Index(fields=['user_id']),
+        ]
 
 
 class CourseContent(models.Model):
